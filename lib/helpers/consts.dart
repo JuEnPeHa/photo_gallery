@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_gallery/databases/database.dart';
+import 'package:photo_gallery/main.dart';
 import 'package:photo_gallery/models/picture_model.dart';
 import 'package:photo_gallery/pages/camera/bloc/camera_bloc.dart';
+import 'package:photo_gallery/pages/my_home_page.dart';
 
 const String appTitle = 'Photo Gallery JEPH';
 
@@ -59,10 +61,20 @@ const List<String> extraIdListForTest = [
   'id20',
 ];
 
+Future<void> firstTimeCreateFirstTags() async {
+  if (photoGalleryDatabase.boolFirstTime) {
+    for (var element in initialListTag) {
+      photoGalleryDatabase.addTag(tag: element);
+      await Future.delayed(const Duration(milliseconds: 10));
+    }
+    photoGalleryDatabase.setBoolFirstTime(value: false);
+  }
+}
+
 Future<void> testCreationRemoveAndUpdateOfTags() async {
   print('Start testCreationRemoveAndUpdateOfTags()');
   // photoGalleryDatabase.clear();
-  await Future.delayed(const Duration(seconds: 1));
+  await Future.delayed(const Duration(milliseconds: 10));
 
   final List<String> _listTag = photoGalleryDatabase.listTag;
   print('listTag: $_listTag');
@@ -73,11 +85,11 @@ Future<void> testCreationRemoveAndUpdateOfTags() async {
   }
 
   photoGalleryDatabase.removeTag(tag: 'All');
-  await Future.delayed(const Duration(seconds: 1));
+  await Future.delayed(const Duration(milliseconds: 10));
   print('listTag: ${photoGalleryDatabase.listTag}');
 
   photoGalleryDatabase.addTag(tag: 'All');
-  await Future.delayed(const Duration(seconds: 1));
+  await Future.delayed(const Duration(milliseconds: 10));
   print('listTag: ${photoGalleryDatabase.listTag}');
 
   for (var element in extraTagListForTest) {
@@ -89,33 +101,33 @@ Future<void> testCreationRemoveAndUpdateOfTags() async {
   print('End testCreationRemoveAndUpdateOfTags()');
 }
 
-Future<void> testCreationRemoveAndUpdateOfPictureModel() async {
-  print('Start testCreationRemoveAndUpdateOfPictureModel()');
-  photoGalleryDatabase.clear();
-  await Future.delayed(const Duration(seconds: 1));
+// Future<void> testCreationRemoveAndUpdateOfPictureModel() async {
+//   print('Start testCreationRemoveAndUpdateOfPictureModel()');
+//   photoGalleryDatabase.clear();
+//   await Future.delayed(const Duration(milliseconds: 10));
 
-  final List<PictureModel> _listPhoto = photoGalleryDatabase.listPhoto;
-  print('listPhoto: $_listPhoto');
-  for (var element in initialListIdForTest) {
-    photoGalleryDatabase.addPhoto(id: element);
-    await Future.delayed(const Duration(milliseconds: 50));
-    print('listPhoto: ${photoGalleryDatabase.listPhoto}');
-  }
+//   final List<PictureModel> _listPhoto = photoGalleryDatabase.listPhoto;
+//   print('listPhoto: $_listPhoto');
+//   for (var element in initialListIdForTest) {
+//     photoGalleryDatabase.addPhoto(id: element);
+//     await Future.delayed(const Duration(milliseconds: 50));
+//     print('listPhoto: ${photoGalleryDatabase.listPhoto}');
+//   }
 
-  photoGalleryDatabase.removePhoto(id: initialListIdForTest[0]);
-  await Future.delayed(const Duration(seconds: 1));
-  print('listPhoto: ${photoGalleryDatabase.listPhoto}');
-  photoGalleryDatabase.addPhoto(id: initialListIdForTest[0]);
-  await Future.delayed(const Duration(seconds: 1));
-  print('listPhoto: ${photoGalleryDatabase.listPhoto}');
-  for (var element in extraIdListForTest) {
-    photoGalleryDatabase.addPhoto(id: element);
-    await Future.delayed(const Duration(milliseconds: 50));
-    print('listPhoto: ${photoGalleryDatabase.listPhoto}');
-  }
+//   photoGalleryDatabase.removePhoto(id: initialListIdForTest[0]);
+//   await Future.delayed(const Duration(milliseconds: 10));
+//   print('listPhoto: ${photoGalleryDatabase.listPhoto}');
+//   photoGalleryDatabase.addPhoto(id: initialListIdForTest[0]);
+//   await Future.delayed(const Duration(milliseconds: 10));
+//   print('listPhoto: ${photoGalleryDatabase.listPhoto}');
+//   for (var element in extraIdListForTest) {
+//     photoGalleryDatabase.addPhoto(id: element);
+//     await Future.delayed(const Duration(milliseconds: 50));
+//     print('listPhoto: ${photoGalleryDatabase.listPhoto}');
+//   }
 
-  print('End testCreationRemoveAndUpdateOfPictureModel()');
-}
+//   print('End testCreationRemoveAndUpdateOfPictureModel()');
+// }
 
 //CameraTakePictureEvent
 void callTakePhotoEventWithBloc({
@@ -146,11 +158,19 @@ void callSaveTitleAndDescriptionEventWithBloc({
 void callSaveTagEventWithBloc({
   required BuildContext context,
   required String tag,
-}) {
-  Navigator.of(context).pop();
+}) async {
   BlocProvider.of<CameraBloc>(context).add(CameraSaveTagEvent(
     tag: tag,
   ));
+  await Future.delayed(const Duration(milliseconds: 25)).then((_) {
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const MyHomePage(title: appTitle),
+      ),
+    );
+  });
 }
 
 //CameraCancelEvent

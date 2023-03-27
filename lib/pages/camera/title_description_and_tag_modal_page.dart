@@ -50,19 +50,6 @@ class TitleDescriptionAndtagModalPage extends StatelessWidget {
                 );
               });
             }
-            //  else if (state is CameraSaveTagState) {
-            //   print('state is CameraSaveTagState');
-            //   SchedulerBinding.instance.addPostFrameCallback((_) async {
-            //     // Navigator.pop(context);
-            //     Navigator.pop(context);
-            //   });
-            //   Navigator.pop(context);
-            // } else if (state is CameraInitialState) {
-            //   print('state is CameraInitialState');
-            //   SchedulerBinding.instance.addPostFrameCallback((_) async {
-            //     Navigator.pop(context);
-            //   });
-            // }
             return Stack(
               fit: StackFit.expand,
               children: [
@@ -72,33 +59,6 @@ class TitleDescriptionAndtagModalPage extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
-                // Column(
-                //   children: [
-                //     GestureDetector(
-                //       onTap: () {},
-                //       child: Container(
-                //         color: Colors.red,
-                //         height: 100,
-                //         width: 100,
-                //       ),
-                //     ),
-                //     GestureDetector(
-                //       onTap: () {
-                //         showDialog(
-                //           context: context,
-                //           builder: (context) {
-                //             return const ModalTagChoose();
-                //           },
-                //         );
-                //       },
-                //       child: Container(
-                //         color: Colors.green,
-                //         height: 100,
-                //         width: 100,
-                //       ),
-                //     ),
-                //   ],
-                // ),
               ],
             );
           },

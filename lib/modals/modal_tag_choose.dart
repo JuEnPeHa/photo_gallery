@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:photo_gallery/consts.dart';
+import 'package:photo_gallery/helpers/consts.dart';
 import 'package:photo_gallery/databases/database.dart';
 import 'package:photo_gallery/widgets/create_new_tag_expand_button.dart';
 import 'package:photo_gallery/widgets/tag_unit_chip_widget.dart';

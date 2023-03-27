@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -13,6 +14,7 @@ enum _Database {
   listPhoto,
   listTag,
   boolFirstTime,
+  // listTagWithItem,
 }
 
 extension FileToBase64 on File {
@@ -36,8 +38,9 @@ class _PhotoGalleryDatabase {
   static final Box _box = Hive.box(HiveBoxName.photoGallery.name);
 
   List<PictureModel> get listPhoto {
-    final List<PictureModel>? _listPhoto = _box.get(_Database.listPhoto.name);
-    return _listPhoto ?? [];
+    final List<PictureModel> _listPhoto = _box.get(_Database.listPhoto.name,
+        defaultValue: <PictureModel>[]).cast<PictureModel>();
+    return _listPhoto;
   }
 
   int get nextPhotoId {
@@ -46,20 +49,40 @@ class _PhotoGalleryDatabase {
   }
 
   List<String> get listTag {
-    final List<String>? _listTag = _box.get(_Database.listTag.name);
-    return _listTag ?? [];
+    final List<String> _listTag =
+        _box.get(_Database.listTag.name) ?? <String>[];
+    return _listTag;
   }
 
-  void addPhoto({required String id}) {
+  List<String> get listTagsWithItem {
+    final List<String> _listTag = listTag;
     final List<PictureModel> _listPhoto = listPhoto;
-    _listPhoto.add(PictureModel(
-      id: id,
-      title: id,
-      description: id,
-      tag: id,
-      base64: id,
-      date: DateTime.now(),
-    ));
+    final List<String> _listTagWithItem = [];
+    for (final String tag in _listTag) {
+      for (final PictureModel pictureModel in _listPhoto) {
+        if (pictureModel.tag == tag) {
+          _listTagWithItem.add(tag);
+          break;
+        }
+      }
+    }
+    return _listTagWithItem;
+  }
+
+  List<PictureModel> itemsFromTag(final String tag) {
+    final List<PictureModel> _listPhoto = listPhoto;
+    final List<PictureModel> _listPhotoWithTag = [];
+    for (final PictureModel pictureModel in _listPhoto) {
+      if (pictureModel.tag == tag) {
+        _listPhotoWithTag.add(pictureModel);
+      }
+    }
+    return _listPhotoWithTag;
+  }
+
+  void addPhoto({required PictureModel pictureModel}) {
+    final List<PictureModel> _listPhoto = listPhoto;
+    _listPhoto.add(pictureModel);
     _box.put(_Database.listPhoto.name, _listPhoto);
   }
 
@@ -92,6 +115,14 @@ class _PhotoGalleryDatabase {
 
   void clear() {
     _box.clear();
+  }
+
+  void clearAllTag() {
+    _box.put(_Database.listTag.name, []);
+  }
+
+  void clearAllPhoto() {
+    _box.put(_Database.listPhoto.name, []);
   }
 
   void delete() {

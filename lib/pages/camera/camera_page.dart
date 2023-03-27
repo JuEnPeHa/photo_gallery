@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:photo_gallery/consts.dart';
+import 'package:photo_gallery/helpers/consts.dart';
 import 'package:photo_gallery/pages/camera/title_description_and_tag_modal_page.dart';
 
 class CameraPage extends StatefulWidget {
@@ -98,21 +98,21 @@ class _CameraPageState extends State<CameraPage> {
 
   @override
   Widget build(BuildContext context) {
-    final double OneFifthOfScreenHeight =
-        MediaQuery.of(context).size.height / 5; // 1/5 of screen height
+    final double height = MediaQuery.of(context).size.height -
+        MediaQuery.of(context).padding.top -
+        MediaQuery.of(context).padding.bottom -
+        kToolbarHeight;
+    final double width = MediaQuery.of(context).size.width -
+        MediaQuery.of(context).padding.left -
+        MediaQuery.of(context).padding.right;
+    final double oneFifthOfScreenHeight = height / 8; // 1/8 of screen height
+    final double oneFifthOfScreenWidth = width / 8; // 1/8 of screen width
+    final Orientation orientation = MediaQuery.of(context).orientation;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Take a photo'),
         backgroundColor: Colors.transparent,
         centerTitle: true,
-        // actions: [
-        //   IconButton(
-        //     onPressed: () {
-        //       changeCamera();
-        //     },
-        //     icon: const Icon(Icons.flip_camera_ios_outlined),
-        //   ),
-        // ],
       ),
       backgroundColor: Colors.transparent,
       body: FutureBuilder(
@@ -131,63 +131,128 @@ class _CameraPageState extends State<CameraPage> {
               return Stack(
                 children: [
                   Positioned.fill(
+                    bottom: orientation == Orientation.portrait
+                        ? oneFifthOfScreenHeight
+                        : 0,
+                    right: orientation == Orientation.portrait
+                        ? 0
+                        : oneFifthOfScreenWidth,
                     child: CameraPreview(
                       _cameraController,
                     ),
-                    bottom: OneFifthOfScreenHeight,
                   ),
                   Positioned(
-                    bottom: 0,
-                    left: 0,
+                    left: MediaQuery.of(context).orientation ==
+                            Orientation.portrait
+                        ? 0
+                        : width - oneFifthOfScreenWidth,
+                    top: MediaQuery.of(context).orientation ==
+                            Orientation.portrait
+                        ? height - oneFifthOfScreenHeight
+                        : 0,
                     right: 0,
+                    bottom: 0,
                     child: Container(
-                      height: OneFifthOfScreenHeight,
-                      color: Colors.black.withOpacity(0.5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              setState(() {
-                                cameraLoading = true;
-                              });
-                              changeCamera();
-                            },
-                            icon: const Icon(
-                              Icons.flip_camera_android,
-                              color: Colors.white,
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              setState(() {
-                                cameraLoading = true;
-                              });
-                              takePicture().then((value) {
-                                if (value != null) {
-                                  callTakePhotoEventWithBloc(
-                                    context: context,
-                                    base64Image: pathToBase64(value),
-                                  );
-                                  Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const TitleDescriptionAndtagModalPage(),
+                        height: MediaQuery.of(context).orientation ==
+                                Orientation.portrait
+                            ? oneFifthOfScreenHeight
+                            : double.maxFinite,
+                        width: MediaQuery.of(context).orientation ==
+                                Orientation.portrait
+                            ? double.maxFinite
+                            : oneFifthOfScreenWidth,
+                        color: Colors.black.withOpacity(0.5),
+                        child: MediaQuery.of(context).orientation ==
+                                Orientation.portrait
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        cameraLoading = true;
+                                      });
+                                      changeCamera();
+                                    },
+                                    icon: const Icon(
+                                      Icons.flip_camera_android,
+                                      color: Colors.white,
                                     ),
-                                  );
-                                }
-                              });
-                            },
-                            icon: const Icon(
-                              Icons.photo_camera,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox.shrink(),
-                        ],
-                      ),
-                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        cameraLoading = true;
+                                      });
+                                      takePicture().then((value) {
+                                        if (value != null) {
+                                          callTakePhotoEventWithBloc(
+                                            context: context,
+                                            base64Image: pathToBase64(value),
+                                          );
+                                          Navigator.of(context).pushReplacement(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const TitleDescriptionAndtagModalPage(),
+                                            ),
+                                          );
+                                        }
+                                      });
+                                    },
+                                    icon: const Icon(
+                                      Icons.photo_camera,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox.shrink(),
+                                ],
+                              )
+                            : Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        cameraLoading = true;
+                                      });
+                                      changeCamera();
+                                    },
+                                    icon: const Icon(
+                                      Icons.flip_camera_android,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        cameraLoading = true;
+                                      });
+                                      takePicture().then((value) {
+                                        if (value != null) {
+                                          callTakePhotoEventWithBloc(
+                                            context: context,
+                                            base64Image: pathToBase64(value),
+                                          );
+                                          Navigator.of(context).pushReplacement(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const TitleDescriptionAndtagModalPage(),
+                                            ),
+                                          );
+                                        }
+                                      });
+                                    },
+                                    icon: const Icon(
+                                      Icons.photo_camera,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox.shrink(),
+                                ],
+                              )),
                   ),
                 ],
               );
@@ -203,7 +268,7 @@ class _CameraPageState extends State<CameraPage> {
                 ],
               );
             } else {
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
             }
           }
         },

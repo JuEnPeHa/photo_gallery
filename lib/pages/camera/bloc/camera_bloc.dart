@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
 import 'package:equatable/equatable.dart';
+import 'package:photo_gallery/databases/database.dart';
 import 'package:photo_gallery/models/picture_model.dart';
 
 part 'camera_event.dart';
@@ -43,6 +44,17 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
           date: state.pictureModel.date,
         ),
       ));
+      photoGalleryDatabase.addPhoto(
+        pictureModel: PictureModel(
+          id: state.pictureModel.id,
+          title: state.pictureModel.title,
+          description: state.pictureModel.description,
+          base64: state.pictureModel.base64,
+          tag: event.tag,
+          date: state.pictureModel.date,
+        ),
+      );
+      emit(CameraInitialState());
     });
     on<CameraCancelEvent>((event, emit) {
       emit(CameraInitialState());

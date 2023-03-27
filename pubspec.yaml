@@ -19,12 +19,13 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   http: ^0.13.5
-  qr_flutter: ^4.0.0
+  # qr_flutter: ^4.0.0 <- Was added to Share Image by QR Code (Not Implemented)
   equatable: ^2.0.5
-  local_auth: ^2.1.6
-  mobile_scanner: ^3.1.1
-  image_picker: ^0.8.7
+  # local_auth: ^2.1.6 <- Was added to Authenticate with Biometrics (Not Implemented)
+  # mobile_scanner: ^3.1.1 <- Was added to Scan QR Code (Not Implemented)
+  # image_picker: ^0.8.7
   camera: ^0.10.3+2
+  flutter_staggered_grid_view: ^0.6.2
 
 dev_dependencies:
   flutter_test:

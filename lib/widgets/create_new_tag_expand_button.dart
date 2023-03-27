@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:photo_gallery/consts.dart';
+import 'package:photo_gallery/helpers/consts.dart';
 import 'package:photo_gallery/databases/database.dart';
 
 class CreateNewTagAndContinueExpanded extends StatefulWidget {
